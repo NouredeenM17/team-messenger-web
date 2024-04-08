@@ -1,6 +1,9 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
+
+    const navigate = useNavigate();
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -12,9 +15,45 @@ const LoginForm = () => {
             setError('Please enter both username and password.');
             return;
           }
+          login(username, password);
     };
 
-    
+    const login = async (username: string, password: string) => {
+        try {
+          const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+          });
+      
+          if (!response.ok) {
+            // Handle server errors and invalid credentials
+            const errorData = await response.json();
+            setError(errorData.error || 'An error occured during login.');
+          }
+      
+          // Login successful
+          const data = await response.json();
+
+          // Extracting token and ID
+          const { token: authToken, userId: userId } = data;
+          
+          // Saving token to local storage
+          localStorage.setItem("tm-auth-token", JSON.stringify(authToken));
+          localStorage.setItem("tm-user-id", JSON.stringify(userId));
+
+          setError('');
+
+          return navigate('/');
+
+        } catch (error: any) {
+          // Handle network errors or other exceptions
+          console.error('Login failed:', error.message);
+          throw error;
+        }
+      };
 
   return (
     <form onSubmit={handleSubmit} className="w-64 mx-auto mt-8 p-4 bg-gray-100 rounded-lg">
