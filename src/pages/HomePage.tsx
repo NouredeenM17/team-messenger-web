@@ -17,6 +17,7 @@ const HomePage = () => {
     const logout = () => {
         localStorage.removeItem("tm-auth-token");
         localStorage.removeItem("tm-user-id");
+        localStorage.removeItem("tm-username");
         return navigate('/login');
     }
 

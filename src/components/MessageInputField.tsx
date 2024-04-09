@@ -12,7 +12,6 @@ const MessageInputField = ({ onSendMessage }: Props) => {
     const [messageText, setMessageText] = useState('');
   
     const handleSend = () => {
-       const timestamp = fetchTimestamp();
       const newMsg: IMessage = {
         content: messageText,
         sender: senderUsername
@@ -20,18 +19,7 @@ const MessageInputField = ({ onSendMessage }: Props) => {
       onSendMessage(newMsg);
       setMessageText('');
     };
-
-    const fetchTimestamp = async () => {
-        try {
-          const result = await fetch('/api/timestamp');
-          const data: string = await result.json();
-          return data;
-        } catch (error) {
-          console.log("Error fetching data:", error);
-        }
-      };
     
-
   return (
     <div className="message-input flex p-4 bg-gray-200 rounded-lg">
         <input
