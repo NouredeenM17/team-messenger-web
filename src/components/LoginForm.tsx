@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const LoginForm = () => {
 
@@ -32,6 +33,7 @@ const LoginForm = () => {
             // Handle server errors and invalid credentials
             const errorData = await response.json();
             setError(errorData.error || 'An error occured during login.');
+            return;
           }
       
           // Login successful
@@ -43,8 +45,10 @@ const LoginForm = () => {
           // Saving token to local storage
           localStorage.setItem("tm-auth-token", JSON.stringify(authToken));
           localStorage.setItem("tm-user-id", JSON.stringify(userId));
+          localStorage.setItem("tm-username", JSON.stringify(username));
 
           setError('');
+          toast.success('Login successful!');
 
           return navigate('/');
 
@@ -53,6 +57,26 @@ const LoginForm = () => {
           console.error('Login failed:', error.message);
           throw error;
         }
+      };
+
+      const register = async () => {
+        const response = await fetch('/api/users', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+        })
+        
+        if (!response.ok) {
+            // Handle server errors
+            const errorData = await response.json();
+            toast.error(errorData.error || 'An error occured during registration.');
+            return;
+        }
+        toast.success('User created successfully!');
+        
+        return;
       };
 
   return (
@@ -80,6 +104,8 @@ const LoginForm = () => {
         />
       </div>
       <button type="submit" className="w-full bg-blue-500 text-white font-semibold py-2 rounded-md">Login</button>
+      <div className="mt-5 mb-5 ">No account?</div>
+      <button type="button" onClick={ register } className="w-full bg-blue-700 text-white font-semibold py-2 rounded-md">Register</button>
     </form>
   )
 }
