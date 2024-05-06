@@ -4,20 +4,34 @@ import MessagesContainer from "./MessagesContainer";
 import MessageInputField from "./MessageInputField";
 import { IMessage } from "../interfaces/IMessage";
 import useWebSocket from "../hooks/useWebSocket";
+import { ISocketMessage } from "../interfaces/ISocketMessage";
 
 const Chatroom = () => {
   const [users, setUsers] = useState<string[]>([]);
   const [messages, setMessages] = useState<IMessage[]>([]);
 
+  const userId = localStorage.getItem("tm-user-id");
+  // TEMP
+  const roomId = 'among';
+  
+
   const handleSendMessage = (newMessage: IMessage) => {
-    sendMessage(newMessage.content);
+    const newMsgObj = {
+      type: 'plaintext',
+      roomId: roomId,
+      sender: newMessage.sender,
+      payload: newMessage.content
+    }
+    sendMessage(JSON.stringify(newMsgObj));
   };
 
   const handleReceiveMessage = (data: string) => {
+    const socketMessage:ISocketMessage = JSON.parse(data);
 
     const msg: IMessage = {
-      content: data,
-      sender: 'temp'
+      content: socketMessage.payload,
+      sender: socketMessage.sender||'undefined',
+      timestamp: socketMessage.timestamp
     }
 
     setMessages([...messages, msg]);
@@ -25,6 +39,7 @@ const Chatroom = () => {
 
   const { sendMessage } = useWebSocket(
     handleReceiveMessage,
+    roomId,
     () => {
       console.error(
         "An error has occured while receiving message in Chatroom.tsx"

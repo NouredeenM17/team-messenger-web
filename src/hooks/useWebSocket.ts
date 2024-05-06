@@ -1,9 +1,11 @@
 import { useEffect, useRef } from "react";
+import { ISocketMessage } from "../interfaces/ISocketMessage";
 
 type MessageHandler = (data: any) => void;
 
 const useWebSocket = (
   onMessage: MessageHandler,
+  roomId: string,
   onError?: (event: Event) => void
 ) => {
   const socketRef = useRef<WebSocket | null>(null);
@@ -15,6 +17,12 @@ const useWebSocket = (
 
     socket.onopen = () => {
       console.log("WebSocket connection established");
+      const initMessage = {
+        type: 'initiation',
+        roomId: roomId
+      };
+      sendMessage(JSON.stringify(initMessage));
+      
 
       socket.onmessage = (event) => {
         console.log("Received message:", event.data);
