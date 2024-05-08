@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ConnectedUserList from "./ConnectedUserList";
 import MessagesContainer from "./MessagesContainer";
 import MessageInputField from "./MessageInputField";
 import { IMessage } from "../interfaces/IMessage";
 import useWebSocket from "../hooks/useWebSocket";
 import { ISocketMessage } from "../interfaces/ISocketMessage";
+import { ITextMessage } from "../interfaces/ITextMessage";
+import { IFileMessage } from "../interfaces/IFileMessage";
 
 const Chatroom = () => {
   const [users, setUsers] = useState<string[]>([]);
@@ -16,26 +18,77 @@ const Chatroom = () => {
   
 
   const handleSendMessage = (newMessage: IMessage) => {
-    const newMsgObj = {
-      type: 'plaintext',
-      roomId: roomId,
-      sender: newMessage.sender,
-      payload: newMessage.content
-    }
-    sendMessage(JSON.stringify(newMsgObj));
+    
+  switch (newMessage.type) {
+    case 'plaintext':
+      sendPlainTextMessage(newMessage as ITextMessage);
+      break;
+    case 'file':
+      sendFileMessage(newMessage as IFileMessage);
+      break; 
+  }
+    
   };
 
   const handleReceiveMessage = (data: string) => {
     const socketMessage:ISocketMessage = JSON.parse(data);
 
-    const msg: IMessage = {
+    switch(socketMessage.type){
+      case 'plaintext':
+        addPlainTextMessage(socketMessage);
+        break;
+      case 'file':
+        addFileMessage(socketMessage);
+        break;
+      default:
+        console.error('message type not defined default switch case run');
+    }
+  };
+
+  const addPlainTextMessage = (socketMessage: ISocketMessage) => {
+    const msg: ITextMessage = {
+      type: socketMessage.type,
       content: socketMessage.payload,
-      sender: socketMessage.sender||'undefined',
+      sender: socketMessage.sender,
       timestamp: socketMessage.timestamp
     }
-
     setMessages([...messages, msg]);
-  };
+  }
+
+  const addFileMessage = (socketMessage: ISocketMessage) => {
+
+    const msg: IFileMessage = {
+      type: socketMessage.type,
+      content: socketMessage.payload,
+      sender: socketMessage.sender,
+      timestamp: socketMessage.timestamp,
+      file: socketMessage.file!
+    }
+    setMessages([...messages, msg]);
+  }
+
+  const sendPlainTextMessage = (newMsg: ITextMessage) => {
+    const msg: ISocketMessage = {
+      type: newMsg.type,
+      roomId: roomId,
+      payload: newMsg.content,
+      sender: newMsg.sender,
+      timestamp: newMsg.timestamp
+    }
+    sendMessage(JSON.stringify(msg));
+  }
+
+  const sendFileMessage = async (newMsg: IFileMessage) => {
+    
+    const msg = {
+      type: newMsg.type,
+      roomId: roomId,
+      payload: newMsg.content,
+      sender: newMsg.sender,
+      file: newMsg.file
+    }
+    sendMessage(JSON.stringify(msg));
+  }
 
   const { sendMessage } = useWebSocket(
     handleReceiveMessage,

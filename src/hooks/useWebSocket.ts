@@ -22,8 +22,8 @@ const useWebSocket = (
         roomId: roomId
       };
       sendMessage(JSON.stringify(initMessage));
-      
 
+      
       socket.onmessage = (event) => {
         console.log("Received message:", event.data);
         onMessage(event.data);
