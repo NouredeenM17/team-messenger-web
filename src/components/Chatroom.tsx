@@ -12,7 +12,8 @@ const Chatroom = () => {
   const [users, setUsers] = useState<string[]>([]);
   const [messages, setMessages] = useState<IMessage[]>([]);
 
-  const userId = localStorage.getItem("tm-user-id");
+  const usernameInStorage: string = localStorage.getItem("tm-username") || '"user"';
+  const username: string = usernameInStorage.substring(1,usernameInStorage.length-1);
   // TEMP
   const roomId = 'among';
   
@@ -39,6 +40,9 @@ const Chatroom = () => {
         break;
       case 'file':
         addFileMessage(socketMessage);
+        break;
+      case 'userlist':
+        updateUserList(socketMessage);
         break;
       default:
         console.error('message type not defined default switch case run');
@@ -67,6 +71,10 @@ const Chatroom = () => {
     setMessages([...messages, msg]);
   }
 
+  const updateUserList = (socketMessage: ISocketMessage) => {
+    setUsers(socketMessage.userList||[]);
+  }
+
   const sendPlainTextMessage = (newMsg: ITextMessage) => {
     const msg: ISocketMessage = {
       type: newMsg.type,
@@ -93,6 +101,7 @@ const Chatroom = () => {
   const { sendMessage } = useWebSocket(
     handleReceiveMessage,
     roomId,
+    username,
     () => {
       console.error(
         "An error has occured while receiving message in Chatroom.tsx"

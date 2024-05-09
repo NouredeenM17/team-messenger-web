@@ -5,7 +5,7 @@ type Props = {
 }
 
 const ConnectedUserList = ({ connectedUsers }:Props) => {
-
+  
   return (
     <div className="user-list bg-gray-100 p-4 rounded-lg">
           {connectedUsers.map(user => (

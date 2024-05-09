@@ -6,6 +6,7 @@ type MessageHandler = (data: any) => void;
 const useWebSocket = (
   onMessage: MessageHandler,
   roomId: string,
+  sender: string,
   onError?: (event: Event) => void
 ) => {
   const socketRef = useRef<WebSocket | null>(null);
@@ -19,6 +20,7 @@ const useWebSocket = (
       console.log("WebSocket connection established");
       const initMessage = {
         type: 'initiation',
+        sender: sender,
         roomId: roomId
       };
       sendMessage(JSON.stringify(initMessage));
@@ -44,7 +46,7 @@ const useWebSocket = (
         socketRef.current.close();
       }
     };
-  }, [onMessage, onError]);
+  }, []);
 
   const sendMessage = (message: string) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {

@@ -7,4 +7,5 @@ export interface ISocketMessage {
     sender: string;
     roomId: string;
     file?: IFile;
+    userList?: string[];
 }
