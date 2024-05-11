@@ -8,18 +8,18 @@ import { ISocketMessage } from "../interfaces/ISocketMessage";
 import { ITextMessage } from "../interfaces/ITextMessage";
 import { IFileMessage } from "../interfaces/IFileMessage";
 
-const Chatroom = () => {
+type Props = {
+  roomId: string;
+}
+
+const Chatroom = ({ roomId }: Props) => {
   const [users, setUsers] = useState<string[]>([]);
   const [messages, setMessages] = useState<IMessage[]>([]);
 
   const usernameInStorage: string = localStorage.getItem("tm-username") || '"user"';
   const username: string = usernameInStorage.substring(1,usernameInStorage.length-1);
-  // TEMP
-  const roomId = 'among';
-  
 
   const handleSendMessage = (newMessage: IMessage) => {
-    
   switch (newMessage.type) {
     case 'plaintext':
       sendPlainTextMessage(newMessage as ITextMessage);
@@ -50,25 +50,22 @@ const Chatroom = () => {
   };
 
   const addPlainTextMessage = (socketMessage: ISocketMessage) => {
-    const msg: ITextMessage = {
+    setMessages(prevMessages => [...prevMessages, {
       type: socketMessage.type,
       content: socketMessage.payload,
       sender: socketMessage.sender,
       timestamp: socketMessage.timestamp
-    }
-    setMessages([...messages, msg]);
+    }]);
   }
-
+  
   const addFileMessage = (socketMessage: ISocketMessage) => {
-
-    const msg: IFileMessage = {
+    setMessages(prevMessages => [...prevMessages, {
       type: socketMessage.type,
       content: socketMessage.payload,
       sender: socketMessage.sender,
       timestamp: socketMessage.timestamp,
       file: socketMessage.file!
-    }
-    setMessages([...messages, msg]);
+    }]);
   }
 
   const updateUserList = (socketMessage: ISocketMessage) => {

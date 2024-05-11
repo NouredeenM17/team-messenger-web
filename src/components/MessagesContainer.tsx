@@ -8,7 +8,6 @@ type Props = {
 };
 
 const MessagesContainer = ({ messages }: Props) => {
-  
   return (
     <div className="messages-container p-4 bg-white rounded-lg shadow">
     {messages.map((message: IMessage, index: number) => (
