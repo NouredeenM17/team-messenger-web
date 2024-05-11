@@ -1,4 +1,4 @@
-import React, { ChangeEvent, KeyboardEventHandler } from "react";
+import { ChangeEvent, KeyboardEventHandler } from "react";
 import { useState, useRef } from "react";
 import { IMessage } from "../interfaces/IMessage";
 import { ITextMessage } from "../interfaces/ITextMessage";

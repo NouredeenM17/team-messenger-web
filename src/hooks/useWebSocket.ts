@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { ISocketMessage } from "../interfaces/ISocketMessage";
 
 type MessageHandler = (data: any) => void;
 
