@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, KeyboardEventHandler } from "react";
 import { useState, useRef } from "react";
 import { IMessage } from "../interfaces/IMessage";
 import { ITextMessage } from "../interfaces/ITextMessage";
@@ -11,11 +11,14 @@ type Props = {
 };
 
 const MessageInputField = ({ onSendMessage }: Props) => {
-  const senderUsername: string = localStorage.getItem("tm-username") || "";
+  const usernameInStorage: string = localStorage.getItem("tm-username") || '"user"';
+  const senderUsername: string = usernameInStorage.substring(1,usernameInStorage.length-1);
 
   const [messageText, setMessageText] = useState("");
 
   const handleSendText = () => {
+    if(messageText === '') return;
+
     const newMsg: ITextMessage = {
       type: "plaintext",
       content: messageText,
@@ -31,6 +34,12 @@ const MessageInputField = ({ onSendMessage }: Props) => {
   const handleFileButtonClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
+    }
+  };
+
+  const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
+    if (event.key === "Enter") {
+      handleSendText();
     }
   };
 
@@ -60,13 +69,14 @@ const MessageInputField = ({ onSendMessage }: Props) => {
   };
 
   return (
-    <div className="message-input flex p-4 bg-gray-200 rounded-lg">
+    <div className="message-input flex p-4 bg-gray-200 rounded-lg mb-10 mt-2">
       <input
         type="text"
         value={messageText}
         onChange={(e) => setMessageText(e.target.value)}
+        onKeyDown={handleKeyDown}
         placeholder="Type a message..."
-        className="flex-grow p-2 rounded-md border-2 border-gray-300 mr-4"
+        className="flex-grow p-2 rounded-md border-2 border-gray-300 mr-2"
       />
       <div>
         <input
@@ -75,11 +85,13 @@ const MessageInputField = ({ onSendMessage }: Props) => {
           style={{ display: "none" }}
           onChange={handleFileChange}
         />
-        <button onClick={handleFileButtonClick}>Choose File</button>
+        <button onClick={handleFileButtonClick}
+        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-2 rounded m-2"
+        >Send File</button>
       </div>
       <button
         onClick={handleSendText}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded m-2"
       >
         Send
       </button>

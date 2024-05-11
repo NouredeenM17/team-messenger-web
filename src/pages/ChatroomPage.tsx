@@ -40,10 +40,20 @@ const ChatroomPage = () => {
   };
 
   return (
-    <div className="m-20">
-      <h1>Room Title: {roomData?.title}</h1>
-      {userId === roomData?.creatorId ? <h1>Room ID: {roomId}</h1> : null}
-      <Chatroom roomId={roomId!} />
+    <div>
+      <div className="flex items-center justify-center space-x-4 mt-5">
+        <div className="text-lg mr-5">
+          <span className="font-semibold">Room Title:</span> {roomData?.title}
+        </div>
+        {userId === roomData?.creatorId && (
+          <div className="text-lg ml-5">
+            <span className="font-semibold">Room ID:</span> {roomId}
+          </div>
+        )}
+      </div>
+      <div className="ml-20 mr-20 mt-5 mb-5">
+        <Chatroom roomId={roomId!} />
+      </div>
     </div>
   );
 };

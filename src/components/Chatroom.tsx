@@ -107,16 +107,16 @@ const Chatroom = ({ roomId }: Props) => {
   );
 
   return (
-    <div className="flex justify-center items-center border-2 border-gray-300 rounded-lg">
-      <div className="grid grid-cols-6 h-screen p-6 w-full h-full bg-gray-50 rounded-lg">
-        <div className="col-span-2 min-w-[20%] min-h-screen">
+    <div className="flex justify-center items-center border-2 border-gray-300 rounded-lg h-screen">
+      <div className="grid grid-cols-6 w-full h-full bg-gray-50 rounded-lg">
+        <div className="col-span-2 min-w-[30%] overflow-y-auto ml-5 mt-5">
           <ConnectedUserList connectedUsers={users} />
         </div>
-        <div className="col-span-4 flex flex-col min-w-[80%] min-h-screen">
-          <div className="flex-grow">
+        <div className="col-span-4 flex flex-col min-w-[70%]">
+          <div className="flex-grow overflow-y-auto mt-5 mr-5">
             <MessagesContainer messages={messages} />
           </div>
-          <div className="flex-none">
+          <div className="flex-none mr-5">
             <MessageInputField onSendMessage={handleSendMessage} />
           </div>
         </div>

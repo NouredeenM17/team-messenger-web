@@ -34,6 +34,7 @@ const HomePage = () => {
 
   const handleCloseCreatePopup = () => {
     setIsCreatePopupOpen(false);
+    setTimeout(fetchUserRooms, 300);
   };
 
   const handleJoinRoomClick = () => {
@@ -42,6 +43,7 @@ const HomePage = () => {
 
   const handleCloseJoinPopup = () => {
     setIsJoinPopupOpen(false);
+    setTimeout(fetchUserRooms, 300);
   };
 
   useEffect(() => {
@@ -50,7 +52,7 @@ const HomePage = () => {
     }
 
     fetchUserRooms();
-  }, [isCreatePopupOpen, isJoinPopupOpen]);
+  }, []);
 
   const logout = () => {
     localStorage.removeItem("tm-auth-token");
